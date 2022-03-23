@@ -21,8 +21,10 @@ BEGIN
 
 tracepoint:sched:sched_switch
 {
-	if (args->prev_state == TASK_RUNNING) {
-		printf("%s\n", @[kstack,ustack]);
+	//4就是TASK_UNINTERRUPTIBLE，但是如果这里用TASK_UNINTERRUPTIBLE就会显示不出内容
+	//TODO：具体原因待调查
+	if (args->prev_state == 4 && args->prev_pid == $1) {
+		@[kstack,ustack] = count();
 	}
 
 }
